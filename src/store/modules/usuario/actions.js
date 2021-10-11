@@ -1,9 +1,15 @@
 export default {
-  create({ commit }, payload) {
+  create({ commit, state }, payload) {
     commit("SET_LOADING", { dataName: "usuario", payload: true });
+
+    const newUser = {
+      ...payload,
+      id: state.usuarios.length + 1,
+    };
+
     return new Promise((resolve) =>
       setTimeout(() => {
-        commit("SET_USER", payload);
+        commit("SET_USER", newUser);
         commit("SET_LOADING", { dataName: "usuario", payload: false });
         resolve(payload);
       }, 2000)
