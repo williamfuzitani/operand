@@ -14,9 +14,10 @@
       <v-col col="12" lg="6">
         <v-card outlined>
           <v-card-text>
-            <v-form @submit.prevent="onSubmit">
+            <v-form ref="form" v-model="validForm" @submit.prevent="onSubmit">
               <v-text-field
                 v-model="form.name"
+                :rules="[(v) => !!v || 'Nome é obrigatório']"
                 label="Nome"
                 placeholder="Nome"
                 dense
@@ -24,6 +25,10 @@
               />
               <v-text-field
                 v-model="form.email"
+                :rules="[
+                  (v) => !!v || 'E-mail é obrigatório',
+                  (v) => /.+@.+\..+/.test(v) || 'Entre com um e-mail válido',
+                ]"
                 label="Email"
                 placeholder="Email"
                 dense
@@ -56,6 +61,8 @@ export default {
   data() {
     return {
       search: "",
+
+      validForm: true,
 
       form: {
         id: null,
@@ -91,9 +98,13 @@ export default {
     },
 
     onSubmit() {
-      this.update(this.form).then(() => {
-        this.$router.go(-1);
-      });
+      this.$refs.form.validate();
+
+      if (this.validForm) {
+        this.update(this.form).then(() => {
+          this.$router.go(-1);
+        });
+      }
     },
   },
 };
